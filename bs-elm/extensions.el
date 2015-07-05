@@ -23,7 +23,14 @@
 
 (defun bs-elm/init-elm-mode ()
   "Initialize elm-mode"
+  (use-package elm-mode
+    :load-path "~/.emacs.d/private/bs-elm/extensions/elm-mode")
   )
+
+(defun bs-elm/init-flycheck-elm ()
+  "Initialize flycheck-elm"
+  (use-package flycheck-elm
+    :load-path "~/.emacs.d/private/bs-elm/extensions/flycheck-elm"))
 
 ;; For each extension, define a function bs-elm/init-<extension-bs-elm>
 ;;
