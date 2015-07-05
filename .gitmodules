@@ -1,0 +1,6 @@
+[submodule "bs-elm/extensions/elm-mode"]
+	path = bs-elm/extensions/elm-mode
+	url = https://github.com/mindphaze/elm-mode.git
+[submodule "bs-elm/extensions/flycheck-elm"]
+	path = bs-elm/extensions/flycheck-elm
+	url = https://github.com/mindphaze/flycheck-elm.git
