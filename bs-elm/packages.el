@@ -11,12 +11,21 @@
 (setq bs-elm-packages
     '(
       flycheck
+      f
+      s
+      let-alist
       ))
 
 ;; List of packages to exclude.
 (setq bs-elm-excluded-packages '())
 
 (defun bs-elm/init-flycheck ()
-  "Initialize my package"
+  "Initialize flycheck"
   (eval-after-load 'flycheck
     '(add-hook 'flycheck-mode-hook #'flycheck-elm-setup)))
+
+(defun bs-elm/init-f ())
+
+(defun bs-elm/init-s ())
+
+(defun bs-elm-init-let-alist ())
