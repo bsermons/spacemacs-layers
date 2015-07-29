@@ -24,8 +24,14 @@
 (defun bs-elm/init-elm-mode ()
   "Initialize elm-mode"
   (use-package elm-mode
-    :load-path "~/.emacs.d/private/bs-elm/extensions/elm-mode")
-  )
+    :load-path "~/.emacs.d/private/bs-elm/extensions/elm-mode"
+    :config (evil-leader/set-key-for-mode 'elm-mode
+              ;; Compile
+              "mcc" 'elm-compile-buffer
+
+              ;; Misc
+              "msn" 'elm-preview-buffer
+              "msm" 'elm-preview-main)))
 
 (defun bs-elm/init-flycheck-elm ()
   "Initialize flycheck-elm"
