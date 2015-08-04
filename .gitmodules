@@ -4,3 +4,6 @@
 [submodule "bs-elm/extensions/flycheck-elm"]
 	path = bs-elm/extensions/flycheck-elm
 	url = https://github.com/mindphaze/flycheck-elm.git
+[submodule "bs-elm/extensions/company-elm"]
+	path = bs-elm/extensions/company-elm
+	url = ssh://mindphaze@205.185.124.86:/home/mindphaze/company-elm
