@@ -1,7 +1,7 @@
 ;;; extensions.el --- bs-elm Layer extensions File for Spacemacs
 ;;
 ;; Copyright (c) 2012-2014 Sylvain Benner
-;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;; Copyright (c) 2014-2015 Brian Sermons & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -19,31 +19,51 @@
       '(
         elm-mode
         flycheck-elm
+        company-elm
         ))
 
 (defun bs-elm/init-elm-mode ()
   "Initialize elm-mode"
   (use-package elm-mode
-    :load-path "~/.emacs.d/private/bs-elm/extensions/elm-mode"
-    :config (evil-leader/set-key-for-mode 'elm-mode
-              ;; Compile
-              "mcc" 'elm-compile-buffer
+    ;:load-path "~/.emacs.d/private/bs-elm/extensions/elm-mode"
+    :defer t
+    :config
+    (evil-leader/set-key-for-mode 'elm-mode
+      ;; Compile
+      "mcc" 'elm-compile-buffer
+      "mcC" 'elm-compile-main
 
-              ;; Misc
-              "msn" 'elm-preview-buffer
-              "msm" 'elm-preview-main)))
+      ;; REPL
+      "msi" 'elm-load-repl
+      "msr" 'push-elm-repl
+      "msp" 'push-decl-elm-repl
+
+      ;; Misc
+      "mn" 'elm-preview-buffer
+      "mm" 'elm-preview-main)
+    :init
+    (progn
+      (require 'elm-mode)
+      (require 'flycheck-elm)
+      (require 'company-elm)))) 
 
 (defun bs-elm/init-flycheck-elm ()
   "Initialize flycheck-elm"
   (use-package flycheck-elm
-    :load-path "~/.emacs.d/private/bs-elm/extensions/flycheck-elm"))
+    :defer t
+    :init (add-hook 'flycheck-mode-hook 'flycheck-elm-setup)))
 
-;; For each extension, define a function bs-elm/init-<extension-bs-elm>
-;;
-;; (defun bs-elm/init-my-extension ()
-;;   "Initialize my extension"
-;;   )
-;;
-;; Often the body of an initialize function uses `use-package'
-;; For more info on `use-package', see readme:
-;; https://github.com/jwiegley/use-package
+(when (configuration-layer/layer-usedp 'auto-completion)
+  (defun bs-elm/post-init-company ()
+    (spacemacs|add-company-hook elm-mode))
+
+  ;; Add the backend to the major-mode specific backend list
+  (defun bs-elm/init-company-elm ()
+    (use-package company-elm
+      :if (configuration-layer/package-usedp 'company)
+      :defer t
+      :init
+      (progn
+        (push 'company-elm-backend company-backends-elm-mode)))))
+
+;(push 'company-elm company-backends-elm-mode))))

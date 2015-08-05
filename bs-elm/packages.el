@@ -10,6 +10,7 @@
 
 (setq bs-elm-packages
     '(
+      company
       flycheck
       f
       s
@@ -19,13 +20,19 @@
 ;; List of packages to exclude.
 (setq bs-elm-excluded-packages '())
 
-(defun bs-elm/init-flycheck ()
-  "Initialize flycheck"
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook #'flycheck-elm-setup)))
-
 (defun bs-elm/init-f ())
 
 (defun bs-elm/init-s ())
 
-(defun bs-elm-init-let-alist ())
+(defun bs-elm/init-let-alist ())
+
+(defun bs-elm/init-company ())
+
+(defun bs-elm/init-flycheck ()
+  "Initialize flycheck"
+  (use-package flycheck
+    :defer t
+    :init ()
+                                        ;(eval-after-load 'elm-mode
+                                        ;(add-hook 'flycheck-mode-hook #'flycheck-elm-setup)))
+    ))
