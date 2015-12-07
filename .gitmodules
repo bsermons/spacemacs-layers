@@ -1,9 +1,12 @@
 [submodule "bs-elm/extensions/elm-mode"]
-	path = bs-elm/extensions/elm-mode
+	path = bs-elm/local/elm-mode
 	url = https://github.com/mindphaze/elm-mode.git
 [submodule "bs-elm/extensions/flycheck-elm"]
-	path = bs-elm/extensions/flycheck-elm
+	path = bs-elm/local/flycheck-elm
 	url = https://github.com/mindphaze/flycheck-elm.git
 [submodule "bs-elm/extensions/company-elm"]
-	path = bs-elm/extensions/company-elm
+	path = bs-elm/local/company-elm
 	url = ssh://mindphaze@205.185.124.86:/home/mindphaze/company-elm
+[submodule "bs-fsharp/extensions/fsproj-mode"]
+	path = bs-fsharp/extensions/fsproj-mode
+	url = https://github.com/bsermons/fsproj-mode

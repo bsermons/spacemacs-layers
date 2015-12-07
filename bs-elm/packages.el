@@ -1,31 +1,117 @@
-;;; packages.el --- bs-elm Layer packages File for Spacemacs
+;;; packages.el --- elm Layer packages File for Spacemacs
+;;
+;; Copyright (c) 2012-2014 Sylvain Benner
+;; Copyright (c) 2014-2015 Sylvain Benner & Contributors
+;;
+;; Author: Sylvain Benner <sylvain.benner@gmail.com>
+;; URL: https://github.com/syl20bnr/spacemacs
+;;
+;; This file is not part of GNU Emacs.
+;;
 ;;; License: GPLv3
-
-;;; Commentary:
-
-;; List of all packages to install and/or initialize. Built-in packages
-;; which require an initialization must be listed explicitly in the list.
-
-;;; Code:
 
 (setq bs-elm-packages
     '(
+      company
+      elm-mode
       flycheck
-      f
-      s
-      let-alist
+      (flycheck-elm :location local)
+      popwin
+      smartparens
       ))
 
-;; List of packages to exclude.
-(setq bs-elm-excluded-packages '())
+(defun bs-elm/post-init-company ()
+  (spacemacs|add-company-hook elm-mode)
+  (add-hook 'elm-mode-hook 'elm-oracle-setup-completion))
 
-(defun bs-elm/init-flycheck ()
-  "Initialize flycheck"
-  (eval-after-load 'flycheck
-    '(add-hook 'flycheck-mode-hook #'flycheck-elm-setup)))
+(defun bs-elm/post-init-flycheck ()
+  (add-hook 'elm-mode-hook 'flycheck-mode))
 
-(defun bs-elm/init-f ())
+(when (configuration-layer/layer-usedp 'syntax-checking)
+  (defun bs-elm/init-flycheck-elm ()
+    "Initialize flycheck-elm"
+    (use-package flycheck-elm
+      :if (configuration-layer/package-usedp 'flycheck)
+      :defer t
+      :init (add-hook 'flycheck-mode-hook 'flycheck-elm-setup t))))
 
-(defun bs-elm/init-s ())
+(defun bs-elm/init-elm-mode ()
+  "Initialize elm-mode"
+  (use-package elm-mode
+    :mode ("\\.elm\\'" . elm-mode)
+    :init
+    (progn
+      (defun spacemacs/init-elm-mode ()
+        "Disable electric-indent-mode and let indentation cycling feature work"
+        (if (fboundp 'electric-indent-local-mode)
+            (electric-indent-local-mode -1)))
 
-(defun bs-elm-init-let-alist ())
+      (add-hook 'elm-mode-hook 'spacemacs/init-elm-mode))
+    :config
+    (require 'flycheck-elm)
+    (progn
+      (push "\\*elm\\*" spacemacs-useful-buffers-regexp)
+
+      (defun spacemacs/elm-compile-buffer-output ()
+        (interactive)
+        (let* ((fname (format "%s.js" (downcase (file-name-base (buffer-file-name))))))
+          (elm-compile--file (elm--buffer-local-file-name) fname)))
+
+      (defun spacemacs/push-decl-elm-repl-focus ()
+        "Send current function to the REPL and focus it in insert state."
+        (interactive)
+        (push-decl-elm-repl)
+        (run-elm-interactive)
+        (evil-insert-state))
+
+      (defun spacemacs/push-elm-repl-focus ()
+        "Send current region to the REPL and focus it in insert state."
+        (push-elm-repl)
+        (run-elm-interactive)
+        (evil-insert-state))
+
+      (evil-leader/set-key-for-mode 'elm-mode
+        ;; make
+        "mcb" 'elm-compile-buffer
+        "mcB" 'spacemacs/elm-compile-buffer-output
+        "mcm" 'elm-compile-main
+
+        ;; oracle
+        "mht" 'elm-oracle-type-at-point
+
+        ;; repl
+        "msi" 'load-elm-repl
+        "msf" 'push-decl-elm-repl
+        "msF" 'spacemacs/push-decl-elm-repl-focus
+        "msr" 'push-elm-repl
+        "msR" 'spacemacs/push-elm-repl-focus
+
+        ;; reactor
+        "mRn" 'elm-preview-buffer
+        "mRm" 'elm-preview-main
+
+        ;; package
+        "mpi" 'elm-import
+        "mpc" 'elm-package-catalog
+        "mpd" 'elm-documentation-lookup)
+
+      (evilify elm-package-mode elm-package-mode-map
+               "g" 'elm-package-refresh
+               "n" 'elm-package-next
+               "p" 'elm-package-prev
+               "v" 'elm-package-view
+               "m" 'elm-package-mark
+               "u" 'elm-package-unmark
+               "x" 'elm-package-install
+               "q" 'quit-window))))
+
+(defun bs-elm/pre-init-popwin ()
+  (spacemacs|use-package-add-hook popwin
+    :post-config
+    (push '("*elm*" :tail t :noselect t) popwin:special-display-config)
+    (push '("*elm-make*" :tail t :noselect t) popwin:special-display-config)))
+
+(defun bs-elm/post-init-smartparens ()
+  (if dotspacemacs-smartparens-strict-mode
+      (add-hook 'elm-mode-hook #'smartparens-strict-mode)
+    (add-hook 'elm-mode-hook #'smartparens-mode)))
