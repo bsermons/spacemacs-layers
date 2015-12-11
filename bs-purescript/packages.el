@@ -23,16 +23,29 @@
 ;; List of packages to exclude.
 (setq bs-purescript-excluded-packages '())
 
+
+(when (configuration-layer/layer-usedp 'auto-completion)
+  (defun bs-purescript/pre-init-psc-ide ()
+    (use-package psc-ide
+      :if (configuration-layer/package-usedp 'company)
+      :defer t
+      :init
+      (push 'company-psc-ide-backend company-backends-purescript-mode)
+      (push 'company-psc-ide-frontend company-backends-purescript-mode))))
+
+
 (defun bs-purescript/post-init-company ()
   (spacemacs|add-company-hook purescript-mode))
-  ;(add-hook 'elm-mode-hook 'elm-oracle-setup-completion))
+
 
 (defun bs-purescript/init-psc-ide ()
   (use-package psc-ide
     :defer t
-    :init (progn
-            (psc-ide-mode)
-            (company-mode))))
+    :init (add-hook 'purescript-mode-hook
+                    (lambda ()
+                      (company-mode)
+                      (psc-ide-mode)))))
+
 
 (defun bs-purescript/init-purescript-mode ()
   (use-package purescript-mode
@@ -40,12 +53,14 @@
     :init
     (progn
       (require 'psci)
+      (require 'psc-ide)
       (add-hook 'purescript-mode-hook 'turn-on-purescript-indentation)
       (evil-leader/set-key-for-mode 'purescript-mode
         "mi="  'purescript-mode-format-imports
         "mi`"  'purescript-navigate-imports-return
         "mia"  'purescript-align-imports
         "min"  'purescript-navigate-imports))))
+
 
 (defun bs-purescript/init-psci ()
   (use-package psci
